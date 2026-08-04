@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useEstoque } from '../context/EstoqueContext';
 import { useModal } from '../context/ModalContext';
 import type { Produto } from '../context/EstoqueContext';
@@ -72,23 +72,34 @@ export const Estoque: React.FC = () => {
   const [unidadePack, definirUnidadePack] = useState('');
   const [tipoSaida, definirTipoSaida] = useState<'uni' | 'pack'>('uni');
 
+  const [categoriasSalvas, setCategoriasSalvas] = useState<Array<{ id: number; nome: string }>>([]);
+
+  useEffect(() => {
+    const carregarCategorias = async () => {
+      try {
+        const response = await fetch('/api/categorias');
+        if (response.ok) {
+          const dados = await response.json();
+          setCategoriasSalvas(dados);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      }
+    };
+    carregarCategorias();
+  }, []);
+
   /* ── OPÇÕES DOS DROPDOWNS ── */
   // Categorias disponíveis para seleção no formulário
   const opcoesCategorias = [
     { valor: '', texto: 'Selecione Categoria' },
-    { valor: 'Cervejas', texto: 'Cervejas' },
-    { valor: 'Refrigerantes', texto: 'Refrigerantes' },
-    { valor: 'Águas', texto: 'Águas' },
-    { valor: 'Destilados', texto: 'Destilados' },
-    { valor: 'Outros', texto: 'Outros' },
-    { valor: 'Besteiras', texto: 'Besteiras' },
-    { valor: 'Cigarros', texto: 'Cigarros' },
+    ...categoriasSalvas.map(cat => ({ valor: cat.nome, texto: cat.nome })),
   ];
 
   // Filtro de categorias na listagem (inclui "Todas")
   const opcoesFiltro = [
     { valor: 'todos', texto: 'Todas Categorias' },
-    ...opcoesCategorias,
+    ...categoriasSalvas.map(cat => ({ valor: cat.nome, texto: cat.nome })),
   ];
 
   /* ── HANDLERS DOS MODAIS ── */
