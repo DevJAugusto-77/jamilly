@@ -31,14 +31,17 @@ export const LinhaVertical = styled.div`
 /* Item individual da timeline */
 export const ItemLinhaTempo = styled.div`
   display: flex;
-  gap: 0.5rem; /* Espaço menor entre ícone e conteúdo em mobile */
-  padding: 0.625rem; /* Padding compacto em mobile */
+  flex-direction: column;
+  gap: 0.75rem; /* Espaço ajustado para empilhamento em mobile */
+  padding: 0.75rem;
   position: relative;
   transition: background-color 0.2s ease;
   border-radius: 1rem;
+  width: 100%;
 
   /* Mais espaço em telas maiores */
   @media (min-width: 640px) {
+    flex-direction: row;
     gap: 0.75rem;
     padding: 0.875rem;
   }
@@ -103,6 +106,11 @@ export const CardMovimentacao = styled.div`
   min-width: 0; /* Evita overflow de texto — crítico para mobile */
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
+
+  @media (max-width: 639px) {
+    width: 100%;
+  }
 `;
 
 /* Badge de tipo de operação (Descarga Ambev, Carga Rota, etc.) */

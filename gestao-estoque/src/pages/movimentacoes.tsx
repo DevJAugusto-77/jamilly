@@ -407,44 +407,42 @@ export const Movimentacoes: React.FC = () => {
           </div>
 
           {/* Lado direito: ações adicionais */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2 lg:mt-0 w-full">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <div className="flex flex-col gap-3 mt-2 lg:mt-0 w-full">
+            <div className="flex flex-wrap gap-2 w-full items-stretch sm:items-center">
               <button
                 type="button"
                 onClick={() => definirMostrarFiltroData((atual) => !atual)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[160px]"
               >
                 <span className="material-symbols-outlined text-base">calendar_month</span>
                 <span>{mostrarFiltroData ? 'Ocultar filtro' : 'Filtrar por data'}</span>
               </button>
               {mostrarFiltroData && (
-                <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <input
-                      type="date"
-                      className="w-full sm:w-44 px-3 py-2 text-sm bg-[#f5f2ff] border border-[#c7c4d8]/60 rounded-lg outline-none"
-                      value={filtroData}
-                      onChange={(e) => definirFiltroData(e.target.value)}
-                    />
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto items-center">
+                  <input
+                    type="date"
+                    className="flex-1 min-w-0 sm:w-44 px-3 py-2 text-sm bg-[#f5f2ff] border border-[#c7c4d8]/60 rounded-lg outline-none"
+                    value={filtroData}
+                    onChange={(e) => definirFiltroData(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => definirFiltroDataAplicada(filtroData)}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
+                  >
+                    Aplicar
+                  </button>
+                  {filtroDataAplicada && (
                     <button
                       type="button"
-                      onClick={() => definirFiltroDataAplicada(filtroData)}
-                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+                      onClick={() => { definirFiltroData(''); definirFiltroDataAplicada(''); }}
+                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
                     >
-                      Aplicar
+                      Limpar
                     </button>
-                    {filtroDataAplicada && (
-                      <button
-                        type="button"
-                        onClick={() => { definirFiltroData(''); definirFiltroDataAplicada(''); }}
-                        className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
-                      >
-                        Limpar
-                      </button>
-                    )}
-                  </div>
+                  )}
                   {filtroDataAplicada && (
-                    <span className="text-[11px] text-on-surface-variant">
+                    <span className="text-[11px] text-on-surface-variant self-center">
                       Filtro ativo: {formatarDataIsoBR(filtroDataAplicada)}
                     </span>
                   )}
@@ -452,7 +450,7 @@ export const Movimentacoes: React.FC = () => {
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-3 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-3 w-full">
               <button
                 onClick={() => exportarMovimentacoesPDF(movimentacoesFiltradas)}
                 className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
