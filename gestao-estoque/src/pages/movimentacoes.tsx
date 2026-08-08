@@ -625,7 +625,7 @@ export const Movimentacoes: React.FC = () => {
                         Conferente: <span className="font-semibold">{mov.conferente}</span>
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex flex-col items-start md:items-end gap-1">
                       <span className="font-mono text-[10px] md:text-xs text-on-surface-variant whitespace-nowrap">
                         {mov.horario} • {mov.data}
                       </span>
@@ -640,12 +640,12 @@ export const Movimentacoes: React.FC = () => {
                   </div>
 
                   {/* Linha inferior: badges de lote + operação + total */}
-                  <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mt-2">
-                    <span className="px-2 py-0.5 bg-[#f5f2ff] text-on-surface-variant text-[9px] md:text-[10px] font-bold rounded font-mono uppercase">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2">
+                    <span className="px-2 py-1 bg-[#f5f2ff] text-on-surface-variant text-[9px] md:text-[10px] font-bold rounded font-mono uppercase break-words">
                       Lote: {mov.lote}
                     </span>
                     <DistintivoFluxo $tipo={mov.tipo}>{mov.operacao}</DistintivoFluxo>
-                    <span className="text-xs font-bold text-on-surface-variant ml-auto">
+                    <span className="text-xs font-bold text-on-surface-variant sm:ml-auto">
                       Total:{' '}
                       {mov.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </span>

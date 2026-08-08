@@ -19,13 +19,14 @@ export const ContainerLinhaTempo = styled.div`
 /* Linha vertical que conecta os itens da timeline */
 export const LinhaVertical = styled.div`
   position: absolute;
-  left: 1.2rem; /* Alinhada ao centro do ícone circular */
+  left: 1rem; /* Alinhada ao centro do ícone circular */
   top: 1.5rem;
   bottom: -1.5rem;
   width: 2px;
   background-color: var(--color-outline-variant);
-  opacity: 0.5;
+  opacity: 0.35;
   z-index: 0;
+  pointer-events: none;
 `;
 
 /* Item individual da timeline */
@@ -38,12 +39,14 @@ export const ItemLinhaTempo = styled.div`
   transition: background-color 0.2s ease;
   border-radius: 1rem;
   width: 100%;
+  padding-left: 2.75rem;
 
   /* Mais espaço em telas maiores */
   @media (min-width: 640px) {
     flex-direction: row;
     gap: 0.75rem;
     padding: 0.875rem;
+    padding-left: 0.875rem;
   }
 
   @media (min-width: 1024px) {
