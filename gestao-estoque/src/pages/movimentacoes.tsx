@@ -32,6 +32,9 @@ export const Movimentacoes: React.FC = () => {
   /* ── ESTADOS DE BUSCA E FILTRO DA TIMELINE ── */
   const [busca, definirBusca] = useState('');
   const [filtroTipo, definirFiltroTipo] = useState<'todos' | 'entrada' | 'saida'>('todos');
+  const [filtroData, definirFiltroData] = useState('');
+  const [filtroDataAplicada, definirFiltroDataAplicada] = useState('');
+  const [mostrarFiltroData, definirMostrarFiltroData] = useState(false);
 
   /* ── ESTADOS DE CONTROLE DOS MODAIS ── */
   const [exibirModalEntrada, definirExibirModalEntrada] = useState(false);
@@ -196,13 +199,23 @@ export const Movimentacoes: React.FC = () => {
 
   /* ── FILTRAGEM DAS MOVIMENTAÇÕES ── */
   // Combina filtro de texto com filtro de tipo (entrada/saída/todos)
+  const mesmaData = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
   const movimentacoesFiltradas = movimentacoes.filter((mov) => {
     const correspondeBusca =
       mov.produtoNome.toLowerCase().includes(busca.toLowerCase()) ||
       mov.operacao.toLowerCase().includes(busca.toLowerCase()) ||
       mov.lote.toLowerCase().includes(busca.toLowerCase());
     const correspondeTipo = filtroTipo === 'todos' || mov.tipo === filtroTipo;
-    return correspondeBusca && correspondeTipo;
+    const correspondeData = !filtroDataAplicada || (() => {
+      const dataMov = parseDataBR(mov.data);
+      const dataFiltroDate = new Date(filtroDataAplicada);
+      return dataMov ? mesmaData(dataMov, dataFiltroDate) : false;
+    })();
+    return correspondeBusca && correspondeTipo && correspondeData;
   });
 
   /* ── CÁLCULO DE LUCRO POR PERÍODO (DIA / SEMANA / MÊS / ANO) ── */
@@ -276,6 +289,8 @@ export const Movimentacoes: React.FC = () => {
     definirModoSelecao(false);
     window.location.reload();
   };
+
+
 
 
 
@@ -397,27 +412,73 @@ export const Movimentacoes: React.FC = () => {
           </div>
 
           {/* Lado direito: ações adicionais */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 lg:mt-0">
-            <button
-              onClick={() => exportarMovimentacoesPDF(movimentacoesFiltradas)}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
-            >
-              <span className="material-symbols-outlined text-base">description</span>
-              <span>Exportar PDF</span>
-            </button>
-            <button
-              onClick={alternarModoSelecao}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border transition-all ${
-                modoSelecao
-                  ? 'bg-[#fff1f2] border-[#f5c2c7] text-[#ba1a1a] hover:bg-[#ffe3e6]'
-                  : 'bg-white border-[#c7c4d8]/60 text-on-surface-variant hover:bg-[#f5f2ff]'
-              }`}
-            >
-              <span className="material-symbols-outlined text-base">
-                {modoSelecao ? 'close' : 'checklist'}
-              </span>
-              <span>{modoSelecao ? 'Cancelar' : 'Excluir Registros'}</span>
-            </button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2 lg:mt-0 w-full">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => definirMostrarFiltroData((atual) => !atual)}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+              >
+                <span className="material-symbols-outlined text-base">calendar_month</span>
+                <span>{mostrarFiltroData ? 'Ocultar filtro' : 'Filtrar por data'}</span>
+              </button>
+              {mostrarFiltroData && (
+                <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <input
+                      type="date"
+                      className="w-full sm:w-44 px-3 py-2 text-sm bg-[#f5f2ff] border border-[#c7c4d8]/60 rounded-lg outline-none"
+                      value={filtroData}
+                      onChange={(e) => definirFiltroData(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => definirFiltroDataAplicada(filtroData)}
+                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+                    >
+                      Aplicar
+                    </button>
+                    {filtroDataAplicada && (
+                      <button
+                        type="button"
+                        onClick={() => { definirFiltroData(''); definirFiltroDataAplicada(''); }}
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+                      >
+                        Limpar
+                      </button>
+                    )}
+                  </div>
+                  {filtroDataAplicada && (
+                    <span className="text-[11px] text-on-surface-variant">
+                      Filtro ativo: {new Date(filtroDataAplicada).toLocaleDateString('pt-BR')}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-3 w-full sm:w-auto">
+              <button
+                onClick={() => exportarMovimentacoesPDF(movimentacoesFiltradas)}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+              >
+                <span className="material-symbols-outlined text-base">description</span>
+                <span>Exportar PDF</span>
+              </button>
+              <button
+                onClick={alternarModoSelecao}
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border transition-all ${
+                  modoSelecao
+                    ? 'bg-[#fff1f2] border-[#f5c2c7] text-[#ba1a1a] hover:bg-[#ffe3e6]'
+                    : 'bg-white border-[#c7c4d8]/60 text-on-surface-variant hover:bg-[#f5f2ff]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-base">
+                  {modoSelecao ? 'close' : 'checklist'}
+                </span>
+                <span>{modoSelecao ? 'Cancelar' : 'Excluir Registros'}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -489,7 +550,7 @@ export const Movimentacoes: React.FC = () => {
                 <select
                   className="w-full mt-1 px-3 py-2.5 bg-white border border-[#c7c4d8]/60 rounded-lg text-sm outline-none cursor-pointer focus:ring-1 focus:ring-[#0b5f6e]"
                   value={saidaFormaPagamento}
-                  onChange={(e) => definirSaidaFormaPagamento(e.target.value as any)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => definirSaidaFormaPagamento(e.target.value as 'especie' | 'pix')}
                 >
                   <option value="especie">Espécie</option>
                   <option value="pix">PIX</option>
