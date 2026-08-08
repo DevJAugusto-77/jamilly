@@ -290,7 +290,7 @@ export const Movimentacoes: React.FC = () => {
 
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 space-y-6 md:space-y-8">
 
       {/* ── CABEÇALHO DA PÁGINA ── */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -304,7 +304,7 @@ export const Movimentacoes: React.FC = () => {
         </div>
         
         {/* Ações principais no cabeçalho */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:flex items-center gap-2 w-full md:w-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
           <button
             onClick={abrirModalEntrada}
             className="flex items-center justify-center gap-1.5 bg-[#006c49] hover:bg-[#005237] text-white font-semibold px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm shadow-md hover:shadow-lg transition-all active:scale-95 whitespace-nowrap"
@@ -330,7 +330,7 @@ export const Movimentacoes: React.FC = () => {
       </div>
 
       {/* ── CARDS DE LUCRO POR PERÍODO ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-white border border-[#c7c4d8]/40 rounded-xl p-3 md:p-4 shadow-sm">
           <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wide text-on-surface-variant opacity-70">
             Lucro Hoje
@@ -370,10 +370,10 @@ export const Movimentacoes: React.FC = () => {
           Desktop: busca à esquerda + abas à direita (flex-row)
           Oculto quando algum modal está aberto */}
       {!(exibirModalEntrada || exibirModalSaida) && (
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-[#c7c4d8]/40 shadow-sm">
+        <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-4 bg-white p-4 rounded-xl border border-[#c7c4d8]/40 shadow-sm">
 
           {/* Lado esquerdo: busca e abas */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 flex-1">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4 flex-1 min-w-0">
             {/* Busca */}
             <div className="relative w-full sm:w-72">
               <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#777587] text-lg pointer-events-none">
@@ -407,8 +407,8 @@ export const Movimentacoes: React.FC = () => {
           </div>
 
           {/* Lado direito: ações adicionais */}
-          <div className="flex flex-col gap-3 mt-2 lg:mt-0 w-full">
-            <div className="flex flex-wrap gap-2 w-full items-stretch sm:items-center">
+          <div className="flex flex-col gap-3 mt-2 xl:mt-0 w-full">
+            <div className="flex flex-col md:flex-row flex-wrap gap-2 w-full items-stretch md:items-center justify-between">
               <button
                 type="button"
                 onClick={() => definirMostrarFiltroData((atual) => !atual)}
@@ -418,17 +418,17 @@ export const Movimentacoes: React.FC = () => {
                 <span>{mostrarFiltroData ? 'Ocultar filtro' : 'Filtrar por data'}</span>
               </button>
               {mostrarFiltroData && (
-                <div className="flex flex-wrap gap-2 w-full sm:w-auto items-center">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full items-stretch sm:items-center">
                   <input
                     type="date"
-                    className="flex-1 min-w-0 sm:w-44 px-3 py-2 text-sm bg-[#f5f2ff] border border-[#c7c4d8]/60 rounded-lg outline-none"
+                    className="w-full sm:w-44 px-3 py-2 text-sm bg-[#f5f2ff] border border-[#c7c4d8]/60 rounded-lg outline-none"
                     value={filtroData}
                     onChange={(e) => definirFiltroData(e.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => definirFiltroDataAplicada(filtroData)}
-                    className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
                   >
                     Aplicar
                   </button>
@@ -436,13 +436,13 @@ export const Movimentacoes: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => { definirFiltroData(''); definirFiltroDataAplicada(''); }}
-                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
+                      className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
                     >
                       Limpar
                     </button>
                   )}
                   {filtroDataAplicada && (
-                    <span className="text-[11px] text-on-surface-variant self-center">
+                    <span className="w-full text-[11px] text-on-surface-variant sm:w-auto self-center">
                       Filtro ativo: {formatarDataIsoBR(filtroDataAplicada)}
                     </span>
                   )}
