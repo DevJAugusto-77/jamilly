@@ -426,11 +426,16 @@ export const ProvedorEstoque: React.FC<ProvedorProps> = ({ children }) => {
     }
   }
 
-  const atualizandoRef = useRef<Set<string>>(new Set())
+  // Map de produtoId -> timestamp da última chamada (proteção contra chamadas duplicadas)
+  const atualizandoRef = useRef<Map<string, number>>(new Map())
 
   const alterarQuantidadeRapida = async (produtoId: string, diferenca: number) => {
-    if (atualizandoRef.current.has(produtoId)) return
-    atualizandoRef.current.add(produtoId)
+    const agora = Date.now()
+    const ultimaChamada = atualizandoRef.current.get(produtoId) ?? 0
+
+    // Bloqueia se já existe uma chamada em andamento ou se foi chamada há menos de 2s
+    if (agora - ultimaChamada < 2000) return
+    atualizandoRef.current.set(produtoId, agora)
 
     const produto = produtos.find((item) => item.id === produtoId)
     if (!produto) {

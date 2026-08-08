@@ -59,6 +59,32 @@ export const Estoque: React.FC = () => {
   const [produtoEdicao, definirProdutoEdicao] = useState<Produto | null>(null);
   const [exibirModalConfirmarExclusao, definirExibirModalConfirmarExclusao] = useState(false);
   const [produtoParaExcluir, definirProdutoParaExcluir] = useState<string | null>(null);
+  // Controla quais produtos estão sendo atualizados (desabilita botões +/- durante a operação)
+  const [produtosAtualizando, definirProdutosAtualizando] = useState<Set<string>>(new Set());
+
+  // Função wrapper para ajuste rápido que desabilita os botões durante a operação
+  const lidarComAjusteRapido = async (produtoId: string, diferenca: number) => {
+    // Ignora se já está atualizando este produto
+    if (produtosAtualizando.has(produtoId)) return;
+
+    // Marca como atualizando (desabilita botões)
+    definirProdutosAtualizando(prev => {
+      const novo = new Set(prev);
+      novo.add(produtoId);
+      return novo;
+    });
+
+    try {
+      await alterarQuantidadeRapida(produtoId, diferenca);
+    } finally {
+      // Libera o botão após a operação
+      definirProdutosAtualizando(prev => {
+        const novo = new Set(prev);
+        novo.delete(produtoId);
+        return novo;
+      });
+    }
+  };
 
   /* ── ESTADOS DOS CAMPOS DO FORMULÁRIO ── */
   const [nome, definirNome] = useState('');
@@ -405,13 +431,14 @@ export const Estoque: React.FC = () => {
                         {/* Botão decrementar quantidade */}
                         <BotaoQuantidade
                           tipo="decrementar"
-                          onClick={() => alterarQuantidadeRapida(item.id, -1)}
-                          disabled={item.quantidade <= 0}
+                          onClick={() => lidarComAjusteRapido(item.id, -1)}
+                          disabled={item.quantidade <= 0 || produtosAtualizando.has(item.id)}
                         />
                         {/* Botão incrementar quantidade */}
                         <BotaoQuantidade
                           tipo="incrementar"
-                          onClick={() => alterarQuantidadeRapida(item.id, 1)}
+                          onClick={() => lidarComAjusteRapido(item.id, 1)}
+                          disabled={produtosAtualizando.has(item.id)}
                         />
                         {/* Separador visual — oculto em mobile */}
                         <span className="w-px h-5 bg-[#c7c4d8]/40 mx-1 hidden sm:inline-block"></span>
@@ -512,15 +539,16 @@ export const Estoque: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <BotaoQuantidade
                       tipo="decrementar"
-                      onClick={() => alterarQuantidadeRapida(item.id, -1)}
-                      disabled={item.quantidade <= 0}
+                      onClick={() => lidarComAjusteRapido(item.id, -1)}
+                      disabled={item.quantidade <= 0 || produtosAtualizando.has(item.id)}
                     />
                     <span className="text-xs font-semibold text-on-surface w-8 text-center">
                       {item.quantidade}
                     </span>
                     <BotaoQuantidade
                       tipo="incrementar"
-                      onClick={() => alterarQuantidadeRapida(item.id, 1)}
+                      onClick={() => lidarComAjusteRapido(item.id, 1)}
+                      disabled={produtosAtualizando.has(item.id)}
                     />
                   </div>
 

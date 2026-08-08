@@ -107,18 +107,17 @@ app.post('/api/movimentacoes', async (req: Request, res: Response) => {
     },
   })
 
-  // A atualização da quantidade do produto agora é feita por uma trigger no banco de dados.
-  // if (tipo === 'entrada') {
-  //   await prisma.produto.update({
-  //     where: { id: produtoId },
-  //     data: { qtdAtual: { increment: quantidade } },
-  //   })
-  // } else if (tipo === 'saida') {
-  //   await prisma.produto.update({
-  //     where: { id: produtoId },
-  //     data: { qtdAtual: { decrement: quantidade } },
-  //   })
-  // }
+  if (tipo === 'entrada') {
+    await prisma.produto.update({
+      where: { id: produtoId },
+      data: { qtdAtual: { increment: quantidade } },
+    })
+  } else if (tipo === 'saida') {
+    await prisma.produto.update({
+      where: { id: produtoId },
+      data: { qtdAtual: { decrement: quantidade } },
+    })
+  }
 
   res.status(201).json(movimentacao)
 })
@@ -141,20 +140,20 @@ app.delete('/api/movimentacoes/:id', async (req: Request, res: Response) => {
     where: { id },
   })
 
-  // Reverte o efeito da movimentação na quantidade do produto (gerenciado pela trigger do banco)
-  // if (movimentacao.tipo === 'entrada') {
-  //   // Se era entrada, decrementa a quantidade
-  //   await prisma.produto.update({
-  //     where: { id: movimentacao.produtoId },
-  //     data: { qtdAtual: { decrement: movimentacao.quantidade } },
-  //   })
-  // } else if (movimentacao.tipo === 'saida') {
-  //   // Se era saída, incrementa a quantidade
-  //   await prisma.produto.update({
-  //     where: { id: movimentacao.produtoId },
-  //     data: { qtdAtual: { increment: movimentacao.quantidade } },
-  //   })
-  // }
+  // Reverte o efeito da movimentação na quantidade do produto
+  if (movimentacao.tipo === 'entrada') {
+    // Se era entrada, decrementa a quantidade
+    await prisma.produto.update({
+      where: { id: movimentacao.produtoId },
+      data: { qtdAtual: { decrement: movimentacao.quantidade } },
+    })
+  } else if (movimentacao.tipo === 'saida') {
+    // Se era saída, incrementa a quantidade
+    await prisma.produto.update({
+      where: { id: movimentacao.produtoId },
+      data: { qtdAtual: { increment: movimentacao.quantidade } },
+    })
+  }
 
   res.status(204).send()
 })
