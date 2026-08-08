@@ -618,7 +618,7 @@ export const Movimentacoes: React.FC = () => {
                 {/* Conteúdo do card de movimentação */}
                 <CardMovimentacao>
                   {/* Linha superior: nome do produto + hora + volume */}
-                  <div className="flex flex-col sm:flex-row sm:justify-between items-start mb-1.5 gap-0.5 sm:gap-1">
+                  <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-1.5 gap-3">
                     <div className="min-w-0">
                       <h4 className="font-bold text-sm md:text-base text-on-surface line-clamp-1">
                         {mov.produtoNome}
@@ -627,8 +627,7 @@ export const Movimentacoes: React.FC = () => {
                         Conferente: <span className="font-semibold">{mov.conferente}</span>
                       </p>
                     </div>
-                    {/* Data, hora e volume — em mobile fica abaixo do nome */}
-                    <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-0 mt-1 sm:mt-0">
+                    <div className="flex flex-col items-end gap-1">
                       <span className="font-mono text-[10px] md:text-xs text-on-surface-variant whitespace-nowrap">
                         {mov.horario} • {mov.data}
                       </span>
@@ -643,14 +642,11 @@ export const Movimentacoes: React.FC = () => {
                   </div>
 
                   {/* Linha inferior: badges de lote + operação + total */}
-                  <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mt-1">
-                    {/* Badge de lote */}
+                  <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mt-2">
                     <span className="px-2 py-0.5 bg-[#f5f2ff] text-on-surface-variant text-[9px] md:text-[10px] font-bold rounded font-mono uppercase">
                       Lote: {mov.lote}
                     </span>
-                    {/* Badge de operação (Descarga Ambev, Carga Rota 04, etc.) */}
                     <DistintivoFluxo $tipo={mov.tipo}>{mov.operacao}</DistintivoFluxo>
-                    {/* Valor total — empurrado para direita com ml-auto */}
                     <span className="text-xs font-bold text-on-surface-variant ml-auto">
                       Total:{' '}
                       {mov.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
