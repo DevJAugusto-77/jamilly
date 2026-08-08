@@ -204,6 +204,15 @@ export const Movimentacoes: React.FC = () => {
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
   };
 
+  const parseDataBR = (data: string): Date | null => {
+    const partes = data.split('/');
+    if (partes.length !== 3) return null;
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]) - 1;
+    const ano = Number(partes[2]);
+    return new Date(ano, mes, dia);
+  };
+
   const movimentacoesFiltradas = movimentacoes.filter((mov) => {
     const correspondeBusca =
       mov.produtoNome.toLowerCase().includes(busca.toLowerCase()) ||
