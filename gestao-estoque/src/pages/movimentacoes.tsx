@@ -198,36 +198,11 @@ export const Movimentacoes: React.FC = () => {
   };
 
   /* ── FILTRAGEM DAS MOVIMENTAÇÕES ── */
-  // Converte data no formato dd/mm/yyyy para um objeto Date local
-  const parseDataBR = (data: string): Date | null => {
-    const partes = data.split('/');
-    if (partes.length !== 3) return null;
-    const dia = Number(partes[0]);
-    const mes = Number(partes[1]) - 1;
-    const ano = Number(partes[2]);
-    return new Date(ano, mes, dia);
-  };
-
-  const parseIsoDateParaDataLocal = (dataIso: string): Date | null => {
-    const partes = dataIso.split('-');
-    if (partes.length !== 3) return null;
-    const ano = Number(partes[0]);
-    const mes = Number(partes[1]) - 1;
-    const dia = Number(partes[2]);
-    return new Date(ano, mes, dia);
-  };
-
   const formatarDataIsoBR = (dataIso: string) => {
     const partes = dataIso.split('-');
     if (partes.length !== 3) return dataIso;
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
   };
-
-  // Combina filtro de texto com filtro de tipo (entrada/saída/todos)
-  const mesmaData = (a: Date, b: Date) =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate();
 
   const movimentacoesFiltradas = movimentacoes.filter((mov) => {
     const correspondeBusca =
@@ -235,11 +210,7 @@ export const Movimentacoes: React.FC = () => {
       mov.operacao.toLowerCase().includes(busca.toLowerCase()) ||
       mov.lote.toLowerCase().includes(busca.toLowerCase());
     const correspondeTipo = filtroTipo === 'todos' || mov.tipo === filtroTipo;
-    const correspondeData = !filtroDataAplicada || (() => {
-      const dataMov = parseDataBR(mov.data);
-      const dataFiltroDate = parseIsoDateParaDataLocal(filtroDataAplicada);
-      return dataMov && dataFiltroDate ? mesmaData(dataMov, dataFiltroDate) : false;
-    })();
+    const correspondeData = !filtroDataAplicada || mov.data === formatarDataIsoBR(filtroDataAplicada);
     return correspondeBusca && correspondeTipo && correspondeData;
   });
 
