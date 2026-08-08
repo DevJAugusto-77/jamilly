@@ -198,6 +198,16 @@ export const Movimentacoes: React.FC = () => {
   };
 
   /* ── FILTRAGEM DAS MOVIMENTAÇÕES ── */
+  // Converte data no formato dd/mm/yyyy para um objeto Date
+  const parseDataBR = (data: string): Date | null => {
+    const partes = data.split('/');
+    if (partes.length !== 3) return null;
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]) - 1;
+    const ano = Number(partes[2]);
+    return new Date(ano, mes, dia);
+  };
+
   // Combina filtro de texto com filtro de tipo (entrada/saída/todos)
   const mesmaData = (a: Date, b: Date) =>
     a.getFullYear() === b.getFullYear() &&
@@ -219,16 +229,6 @@ export const Movimentacoes: React.FC = () => {
   });
 
   /* ── CÁLCULO DE LUCRO POR PERÍODO (DIA / SEMANA / MÊS / ANO) ── */
-  // Converte data no formato dd/mm/yyyy para um objeto Date
-  const parseDataBR = (data: string): Date | null => {
-    const partes = data.split('/');
-    if (partes.length !== 3) return null;
-    const dia = Number(partes[0]);
-    const mes = Number(partes[1]) - 1;
-    const ano = Number(partes[2]);
-    return new Date(ano, mes, dia);
-  };
-
   const agora = new Date();
   const inicioDoDia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
