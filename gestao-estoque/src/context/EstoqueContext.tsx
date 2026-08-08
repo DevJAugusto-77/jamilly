@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, useRef, type ReactNode } from 'react'
 
 export interface Produto {
   id: string
@@ -249,7 +249,6 @@ export const ProvedorEstoque: React.FC<ProvedorProps> = ({ children }) => {
     const payload = {
       nome: produtoAtualizado.nome,
       unidadesPorPack: produtoAtualizado.unidadePack,
-      qtdAtual: produtoAtualizado.quantidade,
       qtdMinima: produtoAtualizado.estoqueMinimo,
       qtdMaxima: produtoAtualizado.estoqueMaximo,
       custoDeCompra: produtoAtualizado.precoCusto,
@@ -269,16 +268,11 @@ export const ProvedorEstoque: React.FC<ProvedorProps> = ({ children }) => {
 
     const produtoAtualizadoBackend = (await response.json()) as BackendProduto
 
-    // Atualiza lista local imediatamente
-    definirProdutos((antigos) =>
-      antigos.map((item) => (item.id === id ? mapProdutoBackendToFrontend(produtoAtualizadoBackend) : item))
-    )
-
     // Se a quantidade foi alterada no formulário, registre uma movimentação automática
     try {
       const produtoAntigo = produtos.find((p) => p.id === id)
       const quantidadeAntiga = produtoAntigo?.quantidade ?? 0
-      const quantidadeNova = Number(produtoAtualizadoBackend.qtdAtual ?? produtoAtualizado.quantidade)
+      const quantidadeNova = Number(produtoAtualizado.quantidade)
       const diff = quantidadeNova - quantidadeAntiga
 
       if (diff !== 0) {
@@ -307,6 +301,9 @@ export const ProvedorEstoque: React.FC<ProvedorProps> = ({ children }) => {
     } catch (err) {
       console.error('Falha ao registrar movimentação automática de edição:', err)
     }
+
+    await carregarProdutos()
+    await carregarMovimentacoes()
   }
 
   const excluirProduto = async (id: string) => {
@@ -429,22 +426,19 @@ export const ProvedorEstoque: React.FC<ProvedorProps> = ({ children }) => {
     }
   }
 
+  const atualizandoRef = useRef<Set<string>>(new Set())
+
   const alterarQuantidadeRapida = async (produtoId: string, diferenca: number) => {
+    if (atualizandoRef.current.has(produtoId)) return
+    atualizandoRef.current.add(produtoId)
+
     const produto = produtos.find((item) => item.id === produtoId)
-    if (!produto) return
+    if (!produto) {
+      atualizandoRef.current.delete(produtoId)
+      return
+    }
 
     const quantidadeAlterada = Math.abs(diferenca)
-    const novaQuantidade = Math.max(0, produto.quantidade + diferenca)
-
-    const response = await fetch(construirUrl(`/produtos/${produtoId}`), {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ qtdAtual: novaQuantidade }),
-    })
-
-    if (!response.ok) {
-      throw new Error('Não foi possível ajustar a quantidade.')
-    }
 
     // Registra movimentação correspondente ao ajuste rápido
     try {
@@ -470,8 +464,12 @@ export const ProvedorEstoque: React.FC<ProvedorProps> = ({ children }) => {
       console.error('Falha ao registrar movimentação do ajuste rápido:', err)
     }
 
-    await carregarProdutos()
-    await carregarMovimentacoes()
+    try {
+      await carregarProdutos()
+      await carregarMovimentacoes()
+    } finally {
+      atualizandoRef.current.delete(produtoId)
+    }
   }
 
   return (
