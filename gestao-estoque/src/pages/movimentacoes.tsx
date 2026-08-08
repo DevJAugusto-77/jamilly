@@ -373,9 +373,9 @@ export const Movimentacoes: React.FC = () => {
         <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-4 bg-white p-4 rounded-xl border border-[#c7c4d8]/40 shadow-sm">
 
           {/* Lado esquerdo: busca e abas */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4 flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 min-w-0">
             {/* Busca */}
-            <div className="relative w-full sm:w-72">
+            <div className="relative w-full min-w-0">
               <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#777587] text-lg pointer-events-none">
                 search
               </span>
@@ -389,7 +389,7 @@ export const Movimentacoes: React.FC = () => {
             </div>
 
             {/* Abas */}
-            <div className="flex bg-[#f0ecf9] rounded-lg p-1 self-center sm:self-auto">
+            <div className="flex flex-wrap items-center gap-2 bg-[#f0ecf9] rounded-lg p-1 justify-start sm:justify-center">
               {(['todos', 'entrada', 'saida'] as const).map((tipo) => (
                 <button
                   key={tipo}
@@ -408,11 +408,11 @@ export const Movimentacoes: React.FC = () => {
 
           {/* Lado direito: ações adicionais */}
           <div className="flex flex-col gap-3 mt-2 xl:mt-0 w-full">
-            <div className="flex flex-col md:flex-row flex-wrap gap-2 w-full items-stretch md:items-center justify-between">
+            <div className="flex flex-col gap-2 w-full">
               <button
                 type="button"
                 onClick={() => definirMostrarFiltroData((atual) => !atual)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[160px]"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-0"
               >
                 <span className="material-symbols-outlined text-base">calendar_month</span>
                 <span>{mostrarFiltroData ? 'Ocultar filtro' : 'Filtrar por data'}</span>
@@ -428,7 +428,7 @@ export const Movimentacoes: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => definirFiltroDataAplicada(filtroData)}
-                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-0"
                   >
                     Aplicar
                   </button>
@@ -436,7 +436,7 @@ export const Movimentacoes: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => { definirFiltroData(''); definirFiltroDataAplicada(''); }}
-                      className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-[100px]"
+                      className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all min-w-0"
                     >
                       Limpar
                     </button>
@@ -450,17 +450,17 @@ export const Movimentacoes: React.FC = () => {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-end gap-3 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
               <button
                 onClick={() => exportarMovimentacoesPDF(movimentacoesFiltradas)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
+                className="w-full flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border border-[#c7c4d8]/60 bg-white hover:bg-[#f5f2ff] text-on-surface-variant transition-all"
               >
                 <span className="material-symbols-outlined text-base">description</span>
                 <span>Exportar PDF</span>
               </button>
               <button
                 onClick={alternarModoSelecao}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border transition-all ${
+                className={`w-full flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg text-xs font-bold border transition-all ${
                   modoSelecao
                     ? 'bg-[#fff1f2] border-[#f5c2c7] text-[#ba1a1a] hover:bg-[#ffe3e6]'
                     : 'bg-white border-[#c7c4d8]/60 text-on-surface-variant hover:bg-[#f5f2ff]'
