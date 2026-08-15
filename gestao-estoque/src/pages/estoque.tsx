@@ -97,6 +97,7 @@ export const Estoque: React.FC = () => {
   const [precoVenda, definirPrecoVenda] = useState('');
   const [unidadePack, definirUnidadePack] = useState('');
   const [tipoSaida, definirTipoSaida] = useState<'uni' | 'pack'>('uni');
+  const [validade, definirValidade] = useState('');
 
   const [categoriasSalvas, setCategoriasSalvas] = useState<Array<{ id: number; nome: string }>>([]);
 
@@ -141,6 +142,7 @@ export const Estoque: React.FC = () => {
     definirPrecoVenda('');
     definirUnidadePack('');
     definirTipoSaida('uni');
+    definirValidade('');
     definirExibirModalAdicionar(true);
     definirTemModalAberto(true);
   };
@@ -158,6 +160,7 @@ export const Estoque: React.FC = () => {
     definirUnidadePack(String(produto.unidadePack));
     // Inferir tipo de saída a partir do unidadePack (1 = unidade)
     definirTipoSaida(produto.unidadePack && produto.unidadePack > 1 ? 'pack' : 'uni');
+    definirValidade(produto.validade || '');
     definirExibirModalEditar(true);
     definirTemModalAberto(true);
   };
@@ -188,6 +191,7 @@ export const Estoque: React.FC = () => {
       unidadePack: unidadePackNum,
       // lucroManual e adicionarJuros movidos para modal de saída
       tipoSaida,
+      validade: validade || undefined,
     } as any);
     definirExibirModalAdicionar(false);
     definirTemModalAberto(false);
@@ -213,6 +217,7 @@ export const Estoque: React.FC = () => {
       precoVenda: venda,
       unidadePack: unidadePackNum,
       tipoSaida,
+      validade: validade || undefined,
     } as any);
     definirExibirModalEditar(false);
     definirTemModalAberto(false);
@@ -679,6 +684,14 @@ export const Estoque: React.FC = () => {
                     onChange={(e) => definirEstoqueMaximo(e.target.value)}
                   />
                 </div>
+                <div className="grid grid-cols-1 gap-2 md:gap-3 mt-3">
+                  <CampoTexto
+                    type="date"
+                    rotulo="Data de Validade (Opcional)"
+                    value={validade}
+                    onChange={(e) => definirValidade(e.target.value)}
+                  />
+                </div>
               </div>
 
               {/* ─ Seção: Financeiro (custo e venda) ─ */}
@@ -824,6 +837,14 @@ export const Estoque: React.FC = () => {
                     rotulo="Máximo"
                     value={estoqueMaximo}
                     onChange={(e) => definirEstoqueMaximo(e.target.value)}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-2 md:gap-3 mt-3">
+                  <CampoTexto
+                    type="date"
+                    rotulo="Data de Validade (Opcional)"
+                    value={validade}
+                    onChange={(e) => definirValidade(e.target.value)}
                   />
                 </div>
               </div>
