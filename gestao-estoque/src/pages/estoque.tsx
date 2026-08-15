@@ -53,6 +53,7 @@ export const Estoque: React.FC = () => {
 
   const [busca, definirBusca] = useState('');
   const [categoriaFiltro, definirCategoriaFiltro] = useState('todos');
+  const [mostrarApenasVencimento, definirMostrarApenasVencimento] = useState(false);
 
   const [exibirModalAdicionar, definirExibirModalAdicionar] = useState(false);
   const [exibirModalEditar, definirExibirModalEditar] = useState(false);
@@ -224,6 +225,15 @@ export const Estoque: React.FC = () => {
     definirProdutoEdicao(null);
   };
 
+  const calcularDiasRestantesValidade = (validade?: string | null) => {
+    if (!validade) return null;
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const dataValidade = new Date(validade + 'T00:00:00');
+    const diffTime = dataValidade.getTime() - hoje.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
   /* ── FILTRAGEM DOS PRODUTOS ── */
   // Aplica busca por texto (nome ou SKU) + filtro por categoria
   const produtosFiltrados = produtos.filter((item) => {
@@ -232,7 +242,12 @@ export const Estoque: React.FC = () => {
       item.id.toLowerCase().includes(busca.toLowerCase());
     const correspondeCategoria =
       categoriaFiltro === 'todos' || item.categoria === categoriaFiltro;
-    return correspondeBusca && correspondeCategoria;
+    const diasRestantes = calcularDiasRestantesValidade(item.validade);
+    const correspondeValidade =
+      !mostrarApenasVencimento ||
+      (diasRestantes !== null && diasRestantes <= 10);
+
+    return correspondeBusca && correspondeCategoria && correspondeValidade;
   });
 
   /* ── UTILITÁRIOS ── */
@@ -333,6 +348,19 @@ export const Estoque: React.FC = () => {
               ))}
             </select>
           </div>
+
+          <button
+            type="button"
+            onClick={() => definirMostrarApenasVencimento((valor) => !valor)}
+            className={`flex items-center justify-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition-all ${
+              mostrarApenasVencimento
+                ? 'border-[#d93025] bg-[#fff1f1] text-[#d93025]'
+                : 'border-[#c7c4d8]/60 bg-white text-[#464555] hover:bg-[#f5f2ff]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-base">warning</span>
+            <span>{mostrarApenasVencimento ? 'Mostrando vencidos' : 'Ver vencidos'}</span>
+          </button>
         </div>
       )}
 
